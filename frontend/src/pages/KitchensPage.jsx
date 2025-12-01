@@ -34,16 +34,38 @@ const KitchensPage = () => {
     }
   };
 
-  const handleCreate = async (e) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentId, setCurrentId] = useState(null);
+
+  const handleEdit = (kitchen) => {
+    setNewKitchen({
+      name: kitchen.name,
+      location: kitchen.location || { address: '', city: '', province: '' },
+      capacity: kitchen.capacity,
+      operatorName: kitchen.operatorName,
+      contactNumber: kitchen.contactNumber
+    });
+    setCurrentId(kitchen._id);
+    setIsEditing(true);
+    setShowForm(true);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/kitchens', newKitchen);
+      if (isEditing) {
+        await axios.put(`http://localhost:5000/api/kitchens/${currentId}`, newKitchen);
+      } else {
+        await axios.post('http://localhost:5000/api/kitchens', newKitchen);
+      }
       setShowForm(false);
+      setIsEditing(false);
+      setCurrentId(null);
       fetchKitchens(); // Refresh list
       setNewKitchen({ name: '', location: { address: '', city: '', province: '' }, capacity: 0, operatorName: '', contactNumber: '' });
     } catch (err) {
-      console.error("Error creating kitchen:", err);
-      alert("Failed to create kitchen");
+      console.error("Error saving kitchen:", err);
+      alert("Failed to save kitchen");
     }
   };
 
@@ -65,7 +87,7 @@ const KitchensPage = () => {
           <h1 className="text-3xl font-bold text-slate-900">Manajemen Dapur</h1>
           <p className="text-slate-500">Daftar Satuan Pelayanan Gizi (Dapur Umum) yang terdaftar.</p>
         </div>
-        <Button onClick={() => setShowForm(!showForm)} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+        <Button onClick={() => { setShowForm(!showForm); setIsEditing(false); setNewKitchen({ name: '', location: { address: '', city: '', province: '' }, capacity: 0, operatorName: '', contactNumber: '' }); }} className="bg-indigo-600 hover:bg-indigo-700 text-white">
           <Plus className="mr-2 h-4 w-4" /> Tambah Dapur
         </Button>
       </div>
@@ -74,10 +96,10 @@ const KitchensPage = () => {
         {showForm && (
           <Card className="mb-8 border-indigo-100 shadow-md">
             <CardHeader>
-              <CardTitle>Tambah Dapur Baru</CardTitle>
+              <CardTitle>{isEditing ? 'Edit Dapur' : 'Tambah Dapur Baru'}</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Nama Dapur</Label>
                   <Input 
@@ -146,9 +168,14 @@ const KitchensPage = () => {
                   <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mb-2">
                     <UtensilsIcon className="h-6 w-6" />
                   </div>
-                  <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(kitchen._id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                      <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(kitchen)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(kitchen._id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                  </div>
                 </div>
                 <CardTitle className="text-lg">{kitchen.name}</CardTitle>
                 <CardDescription className="flex items-center gap-1">

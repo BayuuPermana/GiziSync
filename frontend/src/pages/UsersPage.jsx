@@ -44,16 +44,37 @@ const UsersPage = () => {
     }
   };
 
-  const handleCreate = async (e) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentId, setCurrentId] = useState(null);
+
+  const handleEdit = (user) => {
+    setNewUser({
+      username: user.username,
+      password: '', // Leave blank to keep current password
+      role: user.role,
+      kitchenId: user.kitchenId ? user.kitchenId._id : ''
+    });
+    setCurrentId(user._id);
+    setIsEditing(true);
+    setShowForm(true);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/register', newUser);
+      if (isEditing) {
+        await axios.put(`http://localhost:5000/api/auth/${currentId}`, newUser);
+      } else {
+        await axios.post('http://localhost:5000/api/auth/register', newUser);
+      }
       setShowForm(false);
+      setIsEditing(false);
+      setCurrentId(null);
       fetchUsers();
       setNewUser({ username: '', password: '', role: 'kitchen', kitchenId: '' });
     } catch (err) {
-      console.error("Error creating user:", err);
-      alert("Failed to create user");
+      console.error("Error saving user:", err);
+      alert("Failed to save user");
     }
   };
 
@@ -75,7 +96,7 @@ const UsersPage = () => {
           <h1 className="text-3xl font-bold text-slate-900">Manajemen Pengguna</h1>
           <p className="text-slate-500">Kelola akun admin dan operator dapur.</p>
         </div>
-        <Button onClick={() => setShowForm(!showForm)} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+        <Button onClick={() => { setShowForm(!showForm); setIsEditing(false); setNewUser({ username: '', password: '', role: 'kitchen', kitchenId: '' }); }} className="bg-indigo-600 hover:bg-indigo-700 text-white">
           <Plus className="mr-2 h-4 w-4" /> Tambah User
         </Button>
       </div>
@@ -83,10 +104,10 @@ const UsersPage = () => {
       {showForm && (
         <Card className="mb-8 border-indigo-100 shadow-md">
           <CardHeader>
-            <CardTitle>Tambah User Baru</CardTitle>
+            <CardTitle>{isEditing ? 'Edit User' : 'Tambah User Baru'}</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Username</Label>
                 <Input 
@@ -97,13 +118,13 @@ const UsersPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Password</Label>
+                <Label>Password {isEditing && '(Kosongkan jika tidak ingin mengubah)'}</Label>
                 <Input 
                   type="password"
                   value={newUser.password} 
                   onChange={(e) => setNewUser({...newUser, password: e.target.value})} 
                   placeholder="******" 
-                  required
+                  required={!isEditing}
                 />
               </div>
               <div className="space-y-2">
@@ -152,9 +173,14 @@ const UsersPage = () => {
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-2 ${user.role === 'admin' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}`}>
                   {user.role === 'admin' ? <Shield className="h-6 w-6" /> : <User className="h-6 w-6" />}
                 </div>
-                <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(user._id)}>
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(user)}>
+                        <User className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(user._id)}>
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
               </div>
               <CardTitle className="text-lg">{user.username}</CardTitle>
               <CardDescription className="capitalize">

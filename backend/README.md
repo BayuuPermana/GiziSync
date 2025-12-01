@@ -29,9 +29,17 @@ The REST API server for GiziSync, built with Node.js, Express, and MongoDB.
    JWT_SECRET=your_secret_key
    ```
 
+   ```
+
 3. **Run Server**
    ```bash
    bun run dev
+   ```
+
+4. **Seed Database (Optional)**
+   To create a default admin user (`admin` / `admin123`):
+   ```bash
+   bun seed.js
    ```
 
 ## API Endpoints
@@ -46,12 +54,15 @@ The REST API server for GiziSync, built with Node.js, Express, and MongoDB.
 - `GET /api/kitchens`: Get all kitchens.
 - `POST /api/kitchens`: Create new kitchen.
 - `DELETE /api/kitchens/:id`: Delete kitchen.
+- `PUT /api/kitchens/:id`: Update kitchen details.
 
 ### Commodities
 - `GET /api/commodities`: Get commodity prices.
 - `POST /api/commodities`: Create/Update commodity.
 - `DELETE /api/commodities/:id`: Delete commodity.
+- `PUT /api/commodities/:id`: Update commodity details.
 
 ### Reports
 - `GET /api/reports`: Get all reports.
 - `POST /api/reports`: Submit daily report.
+- `PUT /api/reports/:id`: Update report status (Verify/Reject).

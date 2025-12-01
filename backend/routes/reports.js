@@ -32,4 +32,18 @@ router.get('/kitchen/:kitchenId', async (req, res) => {
     }
 });
 
+// UPDATE REPORT (Status/Details)
+router.put('/:id', async (req, res) => {
+    try {
+        const updatedReport = await Report.findByIdAndUpdate(
+            req.params.id,
+            { $set: req.body },
+            { new: true }
+        );
+        res.status(200).json(updatedReport);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 module.exports = router;

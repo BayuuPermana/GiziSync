@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Search, MapPin, Users, Trash2, Edit } from 'lucide-react';
-import axios from 'axios';
+import axios from '../lib/axios';
 
 const KitchensPage = () => {
   const [kitchens, setKitchens] = useState([]);
@@ -25,7 +25,7 @@ const KitchensPage = () => {
 
   const fetchKitchens = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/kitchens');
+      const res = await axios.get('/kitchens');
       setKitchens(res.data);
       setLoading(false);
     } catch (err) {
@@ -54,9 +54,9 @@ const KitchensPage = () => {
     e.preventDefault();
     try {
       if (isEditing) {
-        await axios.put(`http://localhost:5000/api/kitchens/${currentId}`, newKitchen);
+        await axios.put(`/kitchens/${currentId}`, newKitchen);
       } else {
-        await axios.post('http://localhost:5000/api/kitchens', newKitchen);
+        await axios.post('/kitchens', newKitchen);
       }
       setShowForm(false);
       setIsEditing(false);
@@ -72,7 +72,7 @@ const KitchensPage = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this kitchen?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/kitchens/${id}`);
+        await axios.delete(`/kitchens/${id}`);
         fetchKitchens();
       } catch (err) {
         console.error("Error deleting kitchen:", err);

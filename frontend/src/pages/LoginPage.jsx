@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../lib/axios';
 import { useAuth } from '@/context/AuthContext';
 
 const LoginPage = () => {
@@ -18,7 +18,7 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { username, password });
+      const res = await axios.post('/auth/login', { username, password });
       login(res.data);
       if (res.data.role === 'admin') {
         navigate('/dashboard');

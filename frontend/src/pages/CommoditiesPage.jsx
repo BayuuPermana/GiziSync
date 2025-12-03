@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, Edit, ShoppingBasket } from 'lucide-react';
-import axios from 'axios';
+import axios from '../lib/axios';
 
 const CommoditiesPage = () => {
   const [commodities, setCommodities] = useState([]);
@@ -22,7 +22,7 @@ const CommoditiesPage = () => {
 
   const fetchCommodities = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/commodities');
+      const res = await axios.get('/commodities');
       setCommodities(res.data);
       setLoading(false);
     } catch (err) {
@@ -49,9 +49,9 @@ const CommoditiesPage = () => {
     e.preventDefault();
     try {
       if (isEditing) {
-        await axios.put(`http://localhost:5000/api/commodities/${currentId}`, newCommodity);
+        await axios.put(`/commodities/${currentId}`, newCommodity);
       } else {
-        await axios.post('http://localhost:5000/api/commodities', newCommodity);
+        await axios.post('/commodities', newCommodity);
       }
       setShowForm(false);
       setIsEditing(false);
@@ -67,7 +67,7 @@ const CommoditiesPage = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this commodity?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/commodities/${id}`);
+        await axios.delete(`/commodities/${id}`);
         fetchCommodities();
       } catch (err) {
         console.error("Error deleting commodity:", err);

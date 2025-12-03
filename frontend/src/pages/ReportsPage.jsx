@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FileText, Download, Filter, Calendar } from 'lucide-react';
-import axios from 'axios';
+import axios from '../lib/axios';
 
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
@@ -14,7 +14,7 @@ const ReportsPage = () => {
 
   const fetchReports = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/reports');
+      const res = await axios.get('/reports');
       setReports(res.data);
       setLoading(false);
     } catch (err) {
@@ -35,7 +35,7 @@ const ReportsPage = () => {
   const handleUpdateStatus = async (status) => {
     if (!selectedReport) return;
     try {
-      await axios.put(`http://localhost:5000/api/reports/${selectedReport._id}`, { status });
+      await axios.put(`/reports/${selectedReport._id}`, { status });
       setShowDetail(false);
       fetchReports();
     } catch (err) {

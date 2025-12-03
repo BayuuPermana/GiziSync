@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { Plus, Upload, Send, ShoppingCart, ArrowLeft, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../lib/axios';
 import { useAuth } from '@/context/AuthContext';
 
 const InputPage = () => {
@@ -18,7 +18,7 @@ const InputPage = () => {
   useEffect(() => {
     const fetchCommodities = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/commodities');
+        const res = await axios.get('/commodities');
         setCommodities(res.data);
       } catch (err) {
         console.error("Error fetching commodities:", err);
@@ -78,21 +78,13 @@ const InputPage = () => {
     };
 
     try {
-      await axios.post('http://localhost:5000/api/reports', payload);
+      await axios.post('/reports', payload);
       alert('Laporan Harian Berhasil Dikirim!');
-      navigate('/reports'); // Or stay on page and clear form?
-      // For now, redirecting to reports page (which is likely where they want to see it)
-      // But wait, InputPage is for operators, ReportsPage might be admin only?
-      // If operator, maybe redirect to a "History" page or just clear form.
-      // Let's just clear form for now if we don't have a dedicated operator dashboard yet.
-      // Actually, user asked "where does data go?", implying they want to see it.
-      // If I redirect to /reports, they can see it if they have access.
-      // Operators might not have access to /reports if it's in the admin sidebar.
-      // But for now, let's assume they can view it or we redirect to home.
+      
       if (user?.role === 'admin') {
           navigate('/reports');
       } else {
-          // If operator, maybe just show success and clear?
+          // If operator, just show success and clear form
           setItems([{ commodity: '', quantity: '', unit: 'kg', price: '' }]);
       }
     } catch (error) {

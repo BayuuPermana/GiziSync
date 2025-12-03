@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const Commodity = require('../models/Commodity');
+const { verifyToken, verifyTokenAndAdmin } = require('../middleware/auth');
 
 // GET ALL COMMODITIES
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
         const commodities = await Commodity.find();
         res.status(200).json(commodities);
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 // UPDATE/CREATE COMMODITY (For Admin/Seed)
-router.post('/', async (req, res) => {
+router.post('/', verifyTokenAndAdmin, async (req, res) => {
     try {
         const commodity = await Commodity.findOneAndUpdate(
             { name: req.body.name },
@@ -26,7 +27,7 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE COMMODITY
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         await Commodity.findByIdAndDelete(req.params.id);
         res.status(200).json("Commodity has been deleted...");
@@ -36,7 +37,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // UPDATE COMMODITY
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         const updatedCommodity = await Commodity.findByIdAndUpdate(
             req.params.id,

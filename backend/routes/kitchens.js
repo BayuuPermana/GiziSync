@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const Kitchen = require('../models/Kitchen');
+const { verifyToken, verifyTokenAndAdmin } = require('../middleware/auth');
 
 // CREATE KITCHEN
-router.post('/', async (req, res) => {
+router.post('/', verifyTokenAndAdmin, async (req, res) => {
     const newKitchen = new Kitchen(req.body);
     try {
         const savedKitchen = await newKitchen.save();
@@ -13,7 +14,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET ALL KITCHENS
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
         const kitchens = await Kitchen.find();
         res.status(200).json(kitchens);
@@ -23,7 +24,7 @@ router.get('/', async (req, res) => {
 });
 
 // DELETE KITCHEN
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         await Kitchen.findByIdAndDelete(req.params.id);
         res.status(200).json("Kitchen has been deleted...");
@@ -33,7 +34,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // UPDATE KITCHEN
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     try {
         const updatedKitchen = await Kitchen.findByIdAndUpdate(
             req.params.id,

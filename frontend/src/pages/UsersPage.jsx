@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, User, Shield } from 'lucide-react';
-import axios from 'axios';
+import axios from '../lib/axios';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -26,7 +26,7 @@ const UsersPage = () => {
 
   const fetchKitchens = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/kitchens');
+      const res = await axios.get('/kitchens');
       setKitchens(res.data);
     } catch (err) {
       console.error("Error fetching kitchens:", err);
@@ -35,7 +35,7 @@ const UsersPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/auth');
+      const res = await axios.get('/auth');
       setUsers(res.data);
       setLoading(false);
     } catch (err) {
@@ -63,9 +63,9 @@ const UsersPage = () => {
     e.preventDefault();
     try {
       if (isEditing) {
-        await axios.put(`http://localhost:5000/api/auth/${currentId}`, newUser);
+        await axios.put(`/auth/${currentId}`, newUser);
       } else {
-        await axios.post('http://localhost:5000/api/auth/register', newUser);
+        await axios.post('/auth/register', newUser);
       }
       setShowForm(false);
       setIsEditing(false);
@@ -81,7 +81,7 @@ const UsersPage = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/auth/${id}`);
+        await axios.delete(`/auth/${id}`);
         fetchUsers();
       } catch (err) {
         console.error("Error deleting user:", err);

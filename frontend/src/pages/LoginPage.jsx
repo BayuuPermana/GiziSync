@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -11,12 +12,14 @@ const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
     try {
       const res = await axios.post('/auth/login', { username, password });
       login(res.data);
@@ -28,6 +31,8 @@ const LoginPage = () => {
     } catch (err) {
       console.error("Login failed:", err);
       setError('Invalid username or password');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,8 +73,19 @@ const LoginPage = () => {
                 className="bg-white/50 border-slate-200 focus:border-indigo-500 focus:ring-indigo-500"
               />
             </div>
-            <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-all duration-200 shadow-lg hover:shadow-indigo-500/30" type="submit">
-              Sign In
+            <Button
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition-all duration-200 shadow-lg hover:shadow-indigo-500/30"
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </form>
         </CardContent>

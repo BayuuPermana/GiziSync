@@ -4,11 +4,13 @@ const reportSchema = new mongoose.Schema({
     kitchen: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Kitchen',
-        required: true
+        required: true,
+        index: true // Indexed for faster filtering by kitchen
     },
     date: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        index: true // Indexed for faster range queries and sorting
     },
     items: [{
         commodity: {

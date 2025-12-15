@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Search, MapPin, Users, Trash2, Edit } from 'lucide-react';
+import { Plus, Search, MapPin, Users, Trash2, Edit, Loader2 } from 'lucide-react';
 import axios from '../lib/axios';
 
 const KitchensPage = () => {
   const [kitchens, setKitchens] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [newKitchen, setNewKitchen] = useState({
     name: '',
@@ -52,6 +53,7 @@ const KitchensPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       if (isEditing) {
         await axios.put(`/kitchens/${currentId}`, newKitchen);
@@ -66,6 +68,8 @@ const KitchensPage = () => {
     } catch (err) {
       console.error("Error saving kitchen:", err);
       alert("Failed to save kitchen");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -151,8 +155,11 @@ const KitchensPage = () => {
                   />
                 </div>
                 <div className="col-span-2 flex justify-end gap-2 mt-4">
-                  <Button type="button" variant="ghost" onClick={() => setShowForm(false)}>Batal</Button>
-                  <Button type="submit" className="bg-indigo-600 text-white">Simpan</Button>
+                  <Button type="button" variant="ghost" onClick={() => setShowForm(false)} disabled={submitting}>Batal</Button>
+                  <Button type="submit" className="bg-indigo-600 text-white" disabled={submitting}>
+                    {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Simpan
+                  </Button>
                 </div>
               </form>
             </CardContent>
@@ -169,10 +176,10 @@ const KitchensPage = () => {
                     <UtensilsIcon className="h-6 w-6" />
                   </div>
                   <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(kitchen)}>
+                      <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(kitchen)} aria-label="Edit kitchen">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(kitchen._id)}>
+                      <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(kitchen._id)} aria-label="Delete kitchen">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                   </div>

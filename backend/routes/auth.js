@@ -48,9 +48,11 @@ router.post('/login', async (req, res) => {
 // GET ALL USERS
 router.get('/', async (req, res) => {
     try {
-        const users = await User.find().populate('kitchenId', 'name');
+        // Optimization: Use .lean() for faster read-only performance
+        const users = await User.find().populate('kitchenId', 'name').lean();
         const usersList = users.map(user => {
-            const { password, ...other } = user._doc;
+            // With .lean(), we get POJOs, so we destructure directly (no _doc)
+            const { password, ...other } = user;
             return other;
         });
         res.status(200).json(usersList);

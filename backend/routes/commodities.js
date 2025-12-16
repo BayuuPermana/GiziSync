@@ -5,7 +5,8 @@ const { verifyToken, verifyTokenAndAdmin } = require('../middleware/auth');
 // GET ALL COMMODITIES
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const commodities = await Commodity.find();
+        // Optimization: Use .lean() for faster read-only performance
+        const commodities = await Commodity.find().lean();
         res.status(200).json(commodities);
     } catch (err) {
         res.status(500).json(err);

@@ -16,7 +16,8 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
 // GET ALL KITCHENS
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const kitchens = await Kitchen.find();
+        // Optimization: Use .lean() for faster read-only performance
+        const kitchens = await Kitchen.find().lean();
         res.status(200).json(kitchens);
     } catch (err) {
         res.status(500).json(err);

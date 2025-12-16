@@ -129,7 +129,7 @@ const ReportsPage = () => {
                     <CardTitle>Detail Laporan</CardTitle>
                     <CardDescription>ID: {selectedReport._id}</CardDescription>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => setShowDetail(false)}>X</Button>
+                  <Button variant="ghost" size="icon" aria-label="Close details" onClick={() => setShowDetail(false)}>X</Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">

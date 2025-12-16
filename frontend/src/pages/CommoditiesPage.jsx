@@ -140,10 +140,10 @@ const CommoditiesPage = () => {
                   <ShoppingBasket className="h-6 w-6" />
                 </div>
                 <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(item)}>
+                    <Button variant="ghost" size="icon" aria-label={`Edit ${item.name}`} className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(item)}>
                         <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(item._id)}>
+                    <Button variant="ghost" size="icon" aria-label={`Delete ${item.name}`} className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(item._id)}>
                         <Trash2 className="h-4 w-4" />
                     </Button>
                 </div>

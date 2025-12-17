@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
     kitchenId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Kitchen',
-        required: function () { return this.role === 'kitchen'; }
+        required: function () { return this.role === 'kitchen'; },
+        index: true // Indexed for faster lookups by kitchen
     }
 }, { timestamps: true });
 

@@ -81,7 +81,8 @@ router.get('/stats', verifyToken, async (req, res) => {
 // GET ALL REPORTS (For Dashboard)
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const reports = await Report.find().populate('kitchen');
+        // Optimization: Use .lean() to return plain JS objects instead of Mongoose docs for faster read performance
+        const reports = await Report.find().populate('kitchen').lean();
         res.status(200).json(reports);
     } catch (err) {
         res.status(500).json(err);
@@ -91,7 +92,8 @@ router.get('/', verifyToken, async (req, res) => {
 // GET REPORTS BY KITCHEN
 router.get('/kitchen/:kitchenId', verifyToken, async (req, res) => {
     try {
-        const reports = await Report.find({ kitchen: req.params.kitchenId });
+        // Optimization: Use .lean() to return plain JS objects instead of Mongoose docs for faster read performance
+        const reports = await Report.find({ kitchen: req.params.kitchenId }).lean();
         res.status(200).json(reports);
     } catch (err) {
         res.status(500).json(err);

@@ -16,7 +16,8 @@ router.post('/', verifyTokenAndAdmin, async (req, res) => {
 // GET ALL KITCHENS
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const kitchens = await Kitchen.find();
+        // Use .lean() for faster execution and less memory usage since we don't need Mongoose document features
+        const kitchens = await Kitchen.find().lean();
         res.status(200).json(kitchens);
     } catch (err) {
         res.status(500).json(err);

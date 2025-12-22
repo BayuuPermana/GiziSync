@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Trash2, Edit, ShoppingBasket } from 'lucide-react';
+import { Plus, Trash2, Edit, ShoppingBasket, Loader2 } from 'lucide-react';
 import axios from '../lib/axios';
 
 const CommoditiesPage = () => {
   const [commodities, setCommodities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [newCommodity, setNewCommodity] = useState({
     name: '',
@@ -47,6 +48,7 @@ const CommoditiesPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       if (isEditing) {
         await axios.put(`/commodities/${currentId}`, newCommodity);
@@ -61,6 +63,8 @@ const CommoditiesPage = () => {
     } catch (err) {
       console.error("Error saving commodity:", err);
       alert("Failed to save commodity");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -123,8 +127,11 @@ const CommoditiesPage = () => {
                 />
               </div>
               <div className="col-span-3 flex justify-end gap-2 mt-4">
-                <Button type="button" variant="ghost" onClick={() => setShowForm(false)}>Batal</Button>
-                <Button type="submit" className="bg-indigo-600 text-white">Simpan</Button>
+                <Button type="button" variant="ghost" onClick={() => setShowForm(false)} disabled={isSaving}>Batal</Button>
+                <Button type="submit" className="bg-indigo-600 text-white" disabled={isSaving}>
+                  {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Simpan
+                </Button>
               </div>
             </form>
           </CardContent>
@@ -140,10 +147,22 @@ const CommoditiesPage = () => {
                   <ShoppingBasket className="h-6 w-6" />
                 </div>
                 <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(item)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-400 hover:text-indigo-500"
+                      onClick={() => handleEdit(item)}
+                      aria-label={`Edit ${item.name}`}
+                    >
                         <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(item._id)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-400 hover:text-red-500"
+                      onClick={() => handleDelete(item._id)}
+                      aria-label={`Delete ${item.name}`}
+                    >
                         <Trash2 className="h-4 w-4" />
                     </Button>
                 </div>

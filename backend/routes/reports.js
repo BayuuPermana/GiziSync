@@ -22,7 +22,13 @@ router.get('/stats', verifyToken, async (req, res) => {
         // 1. Price Trends (Daily Avg for common items)
         // Note: Matches "Beras" or "Telur" case-insensitive
         const trendsRaw = await Report.aggregate([
-            { $match: { date: { $gte: lastWeek } } },
+            // Optimization: Filter at report level first to reduce unwind volume
+            {
+                $match: {
+                    date: { $gte: lastWeek },
+                    "items.commodity": { $regex: /beras|telur|rice|egg/i }
+                }
+            },
             { $unwind: "$items" },
             { $match: { "items.commodity": { $regex: /beras|telur|rice|egg/i } } },
             {
@@ -49,7 +55,9 @@ router.get('/stats', verifyToken, async (req, res) => {
 
         // 2. Regional Stats (Latest report per kitchen)
         const kitchenStats = await Report.aggregate([
-            { $sort: { date: -1 } },
+            // Optimization: Sort by kitchen first to use { kitchen: 1, date: -1 } index
+            // This enables a non-blocking sort or efficient stream processing
+            { $sort: { kitchen: 1, date: -1 } },
             {
                 $group: {
                     _id: "$kitchen",

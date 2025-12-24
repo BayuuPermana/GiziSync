@@ -15,7 +15,8 @@ const reportSchema = new mongoose.Schema({
     items: [{
         commodity: {
             type: String, // e.g., "Rice", "Egg"
-            required: true
+            required: true,
+            index: true // Indexed for faster commodity-specific queries
         },
         quantity: {
             type: Number,
@@ -47,5 +48,8 @@ const reportSchema = new mongoose.Schema({
         default: 'pending'
     }
 }, { timestamps: true });
+
+// Compound index to optimize finding the latest report per kitchen
+reportSchema.index({ kitchen: 1, date: -1 });
 
 module.exports = mongoose.model('Report', reportSchema);

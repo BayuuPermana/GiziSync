@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Trash2, User, Shield } from 'lucide-react';
+import { Plus, Trash2, User, Shield, Loader2 } from 'lucide-react';
 import axios from '../lib/axios';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [newUser, setNewUser] = useState({
     username: '',
@@ -61,6 +62,7 @@ const UsersPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       if (isEditing) {
         await axios.put(`/auth/${currentId}`, newUser);
@@ -75,6 +77,8 @@ const UsersPage = () => {
     } catch (err) {
       console.error("Error saving user:", err);
       alert("Failed to save user");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -157,8 +161,17 @@ const UsersPage = () => {
               )}
               
               <div className="col-span-2 flex justify-end gap-2 mt-4">
-                <Button type="button" variant="ghost" onClick={() => setShowForm(false)}>Batal</Button>
-                <Button type="submit" className="bg-indigo-600 text-white">Simpan</Button>
+                <Button type="button" variant="ghost" onClick={() => setShowForm(false)} disabled={isSaving}>Batal</Button>
+                <Button type="submit" className="bg-indigo-600 text-white" disabled={isSaving}>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Menyimpan...
+                    </>
+                  ) : (
+                    "Simpan"
+                  )}
+                </Button>
               </div>
             </form>
           </CardContent>
@@ -174,10 +187,22 @@ const UsersPage = () => {
                   {user.role === 'admin' ? <Shield className="h-6 w-6" /> : <User className="h-6 w-6" />}
                 </div>
                 <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(user)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-400 hover:text-indigo-500"
+                      onClick={() => handleEdit(user)}
+                      aria-label={`Edit ${user.username}`}
+                    >
                         <User className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(user._id)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-400 hover:text-red-500"
+                      onClick={() => handleDelete(user._id)}
+                      aria-label={`Delete ${user.username}`}
+                    >
                         <Trash2 className="h-4 w-4" />
                     </Button>
                 </div>

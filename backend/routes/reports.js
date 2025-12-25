@@ -81,7 +81,8 @@ router.get('/stats', verifyToken, async (req, res) => {
 // GET ALL REPORTS (For Dashboard)
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const reports = await Report.find().populate('kitchen').lean();
+        // Bolt Optimization: Select only 'name' from kitchen to reduce payload size
+        const reports = await Report.find().populate('kitchen', 'name').lean();
         res.status(200).json(reports);
     } catch (err) {
         res.status(500).json(err);

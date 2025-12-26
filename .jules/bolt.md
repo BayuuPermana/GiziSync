@@ -1,8 +1,3 @@
-# Bolt's Journal
-
-This journal tracks critical performance learnings for the GiziSync project.
-
-## Format
-`## YYYY-MM-DD - [Title]`
-`**Learning:** [Insight]`
-`**Action:** [How to apply next time]`
+## 2024-03-24 - Aggregation and Populate Optimizations
+**Learning:** In Mongoose aggregations involving `$unwind`, it's critical to filter documents *before* the unwind stage if possible. Even if the filter condition matches fields inside the array, using it as a pre-filter (`$match`) discards documents that have *no* relevant items, saving the overhead of unwinding irrelevant documents. Also, always specify fields in `populate()` to minimize payload, as default population fetches the entire document.
+**Action:** Always check if a `$match` can be placed before `$unwind`. Audit `populate()` calls to ensure only necessary fields are selected.

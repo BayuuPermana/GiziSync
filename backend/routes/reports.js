@@ -23,6 +23,8 @@ router.get('/stats', verifyToken, async (req, res) => {
         // Note: Matches "Beras" or "Telur" case-insensitive
         const trendsRaw = await Report.aggregate([
             { $match: { date: { $gte: lastWeek } } },
+            // Filter documents that contain the commodity BEFORE unwinding to reduce processing
+            { $match: { "items.commodity": { $regex: /beras|telur|rice|egg/i } } },
             { $unwind: "$items" },
             { $match: { "items.commodity": { $regex: /beras|telur|rice|egg/i } } },
             {
@@ -81,7 +83,8 @@ router.get('/stats', verifyToken, async (req, res) => {
 // GET ALL REPORTS (For Dashboard)
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const reports = await Report.find().populate('kitchen').lean();
+        // Optimized: Only populate 'name' as ReportsPage only uses kitchen name
+        const reports = await Report.find().populate('kitchen', 'name').lean();
         res.status(200).json(reports);
     } catch (err) {
         res.status(500).json(err);

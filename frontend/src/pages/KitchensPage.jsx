@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Search, MapPin, Users, Trash2, Edit } from 'lucide-react';
 import axios from '../lib/axios';
+import { confirm } from '@/components/ui/confirm-dialog';
 
 const KitchensPage = () => {
   const [kitchens, setKitchens] = useState([]);
@@ -70,7 +71,10 @@ const KitchensPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this kitchen?')) {
+    if (await confirm({
+      title: 'Delete Kitchen',
+      message: 'Are you sure you want to delete this kitchen? This action cannot be undone.'
+    })) {
       try {
         await axios.delete(`/kitchens/${id}`);
         fetchKitchens();
@@ -169,10 +173,22 @@ const KitchensPage = () => {
                     <UtensilsIcon className="h-6 w-6" />
                   </div>
                   <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(kitchen)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-slate-400 hover:text-indigo-500"
+                        onClick={() => handleEdit(kitchen)}
+                        aria-label={`Edit ${kitchen.name}`}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(kitchen._id)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-slate-400 hover:text-red-500"
+                        onClick={() => handleDelete(kitchen._id)}
+                        aria-label={`Delete ${kitchen.name}`}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                   </div>

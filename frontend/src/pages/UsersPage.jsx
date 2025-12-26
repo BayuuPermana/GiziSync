@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, User, Shield } from 'lucide-react';
 import axios from '../lib/axios';
+import { confirm } from '@/components/ui/confirm-dialog';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -79,7 +80,10 @@ const UsersPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
+    if (await confirm({
+      title: 'Delete User',
+      message: 'Are you sure you want to delete this user? This action cannot be undone.'
+    })) {
       try {
         await axios.delete(`/auth/${id}`);
         fetchUsers();
@@ -174,10 +178,22 @@ const UsersPage = () => {
                   {user.role === 'admin' ? <Shield className="h-6 w-6" /> : <User className="h-6 w-6" />}
                 </div>
                 <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-indigo-500" onClick={() => handleEdit(user)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-400 hover:text-indigo-500"
+                      onClick={() => handleEdit(user)}
+                      aria-label={`Edit ${user.username}`}
+                    >
                         <User className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-slate-400 hover:text-red-500" onClick={() => handleDelete(user._id)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-400 hover:text-red-500"
+                      onClick={() => handleDelete(user._id)}
+                      aria-label={`Delete ${user.username}`}
+                    >
                         <Trash2 className="h-4 w-4" />
                     </Button>
                 </div>

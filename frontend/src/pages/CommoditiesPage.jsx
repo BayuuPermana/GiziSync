@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, Edit, ShoppingBasket, Loader2 } from 'lucide-react';
 import axios from '../lib/axios';
+import { confirm } from '@/components/ui/confirm-dialog';
 
 const CommoditiesPage = () => {
   const [commodities, setCommodities] = useState([]);
@@ -69,7 +70,10 @@ const CommoditiesPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this commodity?')) {
+    if (await confirm({
+      title: 'Delete Commodity',
+      message: 'Are you sure you want to delete this commodity? This action cannot be undone.'
+    })) {
       try {
         await axios.delete(`/commodities/${id}`);
         fetchCommodities();

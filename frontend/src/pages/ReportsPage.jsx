@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { FileText, Download, Filter, Calendar } from 'lucide-react';
+import { FileText, Download, Filter, Calendar, X } from 'lucide-react';
 import axios from '../lib/axios';
 
 const ReportsPage = () => {
@@ -129,7 +129,9 @@ const ReportsPage = () => {
                     <CardTitle>Detail Laporan</CardTitle>
                     <CardDescription>ID: {selectedReport._id}</CardDescription>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => setShowDetail(false)}>X</Button>
+                  <Button variant="ghost" size="icon" onClick={() => setShowDetail(false)} aria-label="Close detail">
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">

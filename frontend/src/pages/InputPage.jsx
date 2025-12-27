@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Plus, Upload, Send, ShoppingCart, ArrowLeft, Trash2 } from 'lucide-react';
+import { Plus, Upload, Send, ShoppingCart, ArrowLeft, Trash2, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../lib/axios';
 import { useAuth } from '@/context/AuthContext';
@@ -99,7 +99,7 @@ const InputPage = () => {
     <div className="min-h-screen bg-slate-50">
       <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+          <Button variant="ghost" size="icon" onClick={() => navigate('/')} aria-label="Kembali ke Dashboard">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -136,7 +136,14 @@ const InputPage = () => {
                 {items.map((item, index) => (
                   <div key={index} className="p-4 bg-slate-50 rounded-xl border border-slate-200 relative group hover:border-indigo-200 transition-colors">
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button type="button" variant="ghost" size="sm" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveItem(index)}>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => handleRemoveItem(index)}
+                        aria-label={`Hapus item ${index + 1}`}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -213,8 +220,22 @@ const InputPage = () => {
               </div>
 
               <div className="pt-4 border-t border-slate-100">
-                <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-6 text-lg shadow-lg hover:shadow-indigo-500/30 transition-all" disabled={loading}>
-                  <Send className="mr-2 h-5 w-5" /> {loading ? 'Mengirim...' : 'Kirim Laporan'}
+                <Button
+                  type="submit"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-6 text-lg shadow-lg hover:shadow-indigo-500/30 transition-all"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Mengirim...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-5 w-5" />
+                      Kirim Laporan
+                    </>
+                  )}
                 </Button>
               </div>
             </form>

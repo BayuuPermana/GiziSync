@@ -99,7 +99,7 @@ const InputPage = () => {
     <div className="min-h-screen bg-slate-50">
       <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+          <Button variant="ghost" size="icon" aria-label="Kembali ke Dashboard" onClick={() => navigate('/')}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -136,7 +136,7 @@ const InputPage = () => {
                 {items.map((item, index) => (
                   <div key={index} className="p-4 bg-slate-50 rounded-xl border border-slate-200 relative group hover:border-indigo-200 transition-colors">
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button type="button" variant="ghost" size="sm" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveItem(index)}>
+                      <Button type="button" variant="ghost" size="sm" aria-label="Hapus item" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveItem(index)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -202,8 +202,8 @@ const InputPage = () => {
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                 <Label className="text-base font-medium mb-2 block">Upload Foto Nota/Struk</Label>
                 <div className="flex items-center gap-4">
-                  <Input type="file" className="hidden" id="file-upload" />
-                  <Label htmlFor="file-upload" className="cursor-pointer flex items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg hover:bg-white hover:border-indigo-400 transition-all">
+                  <input type="file" className="sr-only peer" id="file-upload" />
+                  <Label htmlFor="file-upload" className="cursor-pointer flex items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg hover:bg-white hover:border-indigo-400 transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500 peer-focus-visible:ring-offset-2">
                     <div className="text-center">
                       <Upload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
                       <span className="text-sm text-slate-500">Klik untuk upload foto struk</span>

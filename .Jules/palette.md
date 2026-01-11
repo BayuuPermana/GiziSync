@@ -1,5 +1,3 @@
-## 2025-12-14 - Login Loading & Accessibility
-**Learning:** shadcn/ui Button component doesn't have a built-in `loading` prop.
-**Action:** Must manually implement loading state using `disabled={loading}` and conditionally rendering a spinner (e.g., `Loader2` from `lucide-react`) inside the button children.
-**Learning:** Browser autofill is inconsistent without explicit attributes.
-**Action:** Always add `autoComplete="username"` and `autoComplete="current-password"` to login forms to support password managers and accessibility tools.
+## 2024-05-23 - Accessibility of Hidden File Inputs
+**Learning:** Using `display: none` (or Tailwind's `hidden`) on a file input removes it from the accessibility tree, making it impossible for keyboard-only users to upload files.
+**Action:** Use `.sr-only` (screen reader only) combined with `.peer` on the input, and `.peer-focus-visible:ring` on the custom label to ensure the input remains focusable and provides visual feedback when focused via keyboard.

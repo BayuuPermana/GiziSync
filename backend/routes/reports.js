@@ -99,7 +99,7 @@ router.get('/', verifyToken, async (req, res) => {
         }
 
         const reports = await Report.find(query)
-            .populate('kitchen')
+            .populate('kitchen', 'name')
             .sort(sortOptions)
             .lean();
             

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Plus, Upload, Send, ShoppingCart, ArrowLeft, Trash2 } from 'lucide-react';
+import { Plus, Upload, Send, ShoppingCart, ArrowLeft, Trash2, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../lib/axios';
 import { useAuth } from '@/context/AuthContext';
@@ -135,8 +135,8 @@ const InputPage = () => {
               <div className="space-y-4">
                 {items.map((item, index) => (
                   <div key={index} className="p-4 bg-slate-50 rounded-xl border border-slate-200 relative group hover:border-indigo-200 transition-colors">
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button type="button" variant="ghost" size="sm" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveItem(index)}>
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                      <Button type="button" variant="ghost" size="sm" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveItem(index)} aria-label="Hapus item belanja">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -202,8 +202,8 @@ const InputPage = () => {
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                 <Label className="text-base font-medium mb-2 block">Upload Foto Nota/Struk</Label>
                 <div className="flex items-center gap-4">
-                  <Input type="file" className="hidden" id="file-upload" />
-                  <Label htmlFor="file-upload" className="cursor-pointer flex items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg hover:bg-white hover:border-indigo-400 transition-all">
+                  <input type="file" className="sr-only peer" id="file-upload" />
+                  <Label htmlFor="file-upload" className="cursor-pointer flex items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg hover:bg-white hover:border-indigo-400 peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500 transition-all">
                     <div className="text-center">
                       <Upload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
                       <span className="text-sm text-slate-500">Klik untuk upload foto struk</span>
@@ -214,7 +214,7 @@ const InputPage = () => {
 
               <div className="pt-4 border-t border-slate-100">
                 <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-6 text-lg shadow-lg hover:shadow-indigo-500/30 transition-all" disabled={loading}>
-                  <Send className="mr-2 h-5 w-5" /> {loading ? 'Mengirim...' : 'Kirim Laporan'}
+                  {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />} {loading ? 'Mengirim...' : 'Kirim Laporan'}
                 </Button>
               </div>
             </form>

@@ -16,7 +16,10 @@ router.get('/', verifyToken, async (req, res) => {
             sortOptions[sortBy] = order === 'desc' ? -1 : 1;
         }
 
-        const commodities = await Commodity.find(query).sort(sortOptions);
+        // Optimization: Exclude 'history' field to reduce payload size as it grows indefinitely
+        const commodities = await Commodity.find(query)
+            .select('-history')
+            .sort(sortOptions);
         res.status(200).json(commodities);
     } catch (err) {
         res.status(500).json(err);

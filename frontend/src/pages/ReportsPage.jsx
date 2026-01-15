@@ -51,9 +51,15 @@ const ReportsPage = () => {
     setSortConfig({ key, direction });
   };
 
-  const handleViewDetail = (report) => {
+  const handleViewDetail = async (report) => {
     setSelectedReport(report);
     setShowDetail(true);
+    try {
+      const res = await axios.get(`/reports/${report._id}`);
+      setSelectedReport((current) => current?._id === report._id ? res.data : current);
+    } catch (err) {
+      console.error("Error fetching report details:", err);
+    }
   };
 
   const handleUpdateStatus = async (status) => {
@@ -212,14 +218,20 @@ const ReportsPage = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {selectedReport.items?.map((item, idx) => (
-                          <tr key={idx} className="border-b last:border-0">
-                            <td className="p-2">{item.commodity || item.commodityName || '-'}</td>
-                            <td className="p-2 text-right">{item.quantity} {item.unit}</td>
-                            <td className="p-2 text-right">{item.pricePerUnit?.toLocaleString('id-ID')}</td>
-                            <td className="p-2 text-right">{((item.quantity || 0) * (item.pricePerUnit || 0))?.toLocaleString('id-ID')}</td>
+                        {!selectedReport.items ? (
+                          <tr>
+                            <td colSpan="4" className="p-4 text-center text-slate-500">Memuat detail item...</td>
                           </tr>
-                        ))}
+                        ) : (
+                          selectedReport.items.map((item, idx) => (
+                            <tr key={idx} className="border-b last:border-0">
+                              <td className="p-2">{item.commodity || item.commodityName || '-'}</td>
+                              <td className="p-2 text-right">{item.quantity} {item.unit}</td>
+                              <td className="p-2 text-right">{item.pricePerUnit?.toLocaleString('id-ID')}</td>
+                              <td className="p-2 text-right">{((item.quantity || 0) * (item.pricePerUnit || 0))?.toLocaleString('id-ID')}</td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>

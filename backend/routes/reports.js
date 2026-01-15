@@ -99,7 +99,8 @@ router.get('/', verifyToken, async (req, res) => {
         }
 
         const reports = await Report.find(query)
-            .populate('kitchen')
+            .select('-items')
+            .populate('kitchen', 'name')
             .sort(sortOptions)
             .lean();
             
@@ -128,6 +129,18 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
             { new: true }
         );
         res.status(200).json(updatedReport);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// GET SINGLE REPORT (With Details)
+router.get('/:id', verifyToken, async (req, res) => {
+    try {
+        const report = await Report.findById(req.params.id)
+            .populate('kitchen')
+            .lean();
+        res.status(200).json(report);
     } catch (err) {
         res.status(500).json(err);
     }

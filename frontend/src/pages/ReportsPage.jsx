@@ -1,10 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FileText, Download, Filter, Calendar, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import axios from '../lib/axios';
 import SearchBar from '../components/SearchBar';
+
+// Optimized: Extracted component to prevent re-creation on every render
+const SortableHead = memo(({ label, sortKey, sortConfig, onSort, className = "" }) => (
+  <th className={`h-12 px-4 align-middle font-medium text-slate-500 ${className}`}>
+    <Button variant="ghost" onClick={() => onSort(sortKey)} className="-ml-4 h-8 hover:bg-transparent">
+      {label}
+      {sortConfig.key === sortKey ? (
+        sortConfig.direction === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />
+      ) : (
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      )}
+    </Button>
+  </th>
+));
+
+SortableHead.displayName = 'SortableHead';
 
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
@@ -43,13 +59,16 @@ const ReportsPage = () => {
     setSearchQuery(query);
   };
 
-  const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
-  };
+  // Optimized: Wrapped in useCallback and uses functional state update for stability
+  const handleSort = useCallback((key) => {
+    setSortConfig(prev => {
+      let direction = 'asc';
+      if (prev.key === key && prev.direction === 'asc') {
+        direction = 'desc';
+      }
+      return { key, direction };
+    });
+  }, []);
 
   const handleViewDetail = (report) => {
     setSelectedReport(report);
@@ -67,15 +86,6 @@ const ReportsPage = () => {
       alert("Failed to update status");
     }
   };
-
-  const SortableHead = ({ label, sortKey, className = "" }) => (
-    <th className={`h-12 px-4 align-middle font-medium text-slate-500 ${className}`}>
-      <Button variant="ghost" onClick={() => handleSort(sortKey)} className="-ml-4 h-8 hover:bg-transparent">
-        {label}
-        {sortConfig.key === sortKey ? (sortConfig.direction === 'asc' ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />) : <ArrowUpDown className="ml-2 h-4 w-4" />}
-      </Button>
-    </th>
-  );
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -116,10 +126,10 @@ const ReportsPage = () => {
                 <thead className="[&_tr]:border-b">
                   <tr className="border-b transition-colors hover:bg-slate-50/50 data-[state=selected]:bg-slate-50">
                     <th className="h-12 px-4 align-middle font-medium text-slate-500">ID Laporan</th>
-                    <SortableHead label="Tanggal" sortKey="date" />
+                    <SortableHead label="Tanggal" sortKey="date" sortConfig={sortConfig} onSort={handleSort} />
                     <th className="h-12 px-4 align-middle font-medium text-slate-500">Dapur</th>
-                    <SortableHead label="Total Belanja" sortKey="totalExpenditure" />
-                    <SortableHead label="Status" sortKey="status" />
+                    <SortableHead label="Total Belanja" sortKey="totalExpenditure" sortConfig={sortConfig} onSort={handleSort} />
+                    <SortableHead label="Status" sortKey="status" sortConfig={sortConfig} onSort={handleSort} />
                     <th className="h-12 px-4 align-middle font-medium text-slate-500 text-right">Aksi</th>
                   </tr>
                 </thead>

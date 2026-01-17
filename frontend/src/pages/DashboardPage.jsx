@@ -21,20 +21,17 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Kitchen Count
-        const resKitchens = await axios.get('/kitchens');
-        const kitchenCount = resKitchens.data.length;
-
-        // Fetch Stats (Trends & Regional)
+        // Fetch Stats (Trends, Regional & Total Kitchens)
         const resStats = await axios.get('/reports/stats');
-        
+        const { totalKitchens, trends, kitchenStats } = resStats.data;
+
         setStats({
-          totalKitchens: kitchenCount,
-          mealsServed: kitchenCount * 500, // Estimate: 500 meals per kitchen
+          totalKitchens: totalKitchens,
+          mealsServed: totalKitchens * 500, // Estimate: 500 meals per kitchen
           inflationAlerts: 0 // To be calculated from regional stats if needed
         });
-        setTrends(resStats.data.trends);
-        setKitchenStats(resStats.data.kitchenStats);
+        setTrends(trends);
+        setKitchenStats(kitchenStats);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);

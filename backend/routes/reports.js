@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Report = require('../models/Report');
+const Kitchen = require('../models/Kitchen');
 const { verifyToken, verifyTokenAndAdmin } = require('../middleware/auth');
 
 // CREATE REPORT
@@ -69,7 +70,9 @@ router.get('/stats', verifyToken, async (req, res) => {
             }
         ]);
 
-        res.status(200).json({ trends, kitchenStats });
+        const totalKitchens = await Kitchen.countDocuments();
+
+        res.status(200).json({ trends, kitchenStats, totalKitchens });
     } catch (err) {
         console.error(err);
         res.status(500).json(err);
@@ -87,7 +90,6 @@ router.get('/', verifyToken, async (req, res) => {
         }
 
         if (q) {
-            const Kitchen = require('../models/Kitchen');
             const matchingKitchens = await Kitchen.find({ name: { $regex: q, $options: 'i' } }).select('_id');
             const kitchenIds = matchingKitchens.map(k => k._id);
             query.kitchen = { $in: kitchenIds };

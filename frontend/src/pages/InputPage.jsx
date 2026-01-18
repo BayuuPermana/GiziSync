@@ -99,7 +99,7 @@ const InputPage = () => {
     <div className="min-h-screen bg-slate-50">
       <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+          <Button variant="ghost" size="icon" onClick={() => navigate('/')} aria-label="Kembali ke halaman utama">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -135,15 +135,16 @@ const InputPage = () => {
               <div className="space-y-4">
                 {items.map((item, index) => (
                   <div key={index} className="p-4 bg-slate-50 rounded-xl border border-slate-200 relative group hover:border-indigo-200 transition-colors">
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button type="button" variant="ghost" size="sm" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveItem(index)}>
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                      <Button type="button" variant="ghost" size="sm" aria-label="Hapus item" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveItem(index)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                       <div className="md:col-span-4 space-y-2">
-                        <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Komoditas</Label>
+                        <Label htmlFor={`commodity-${index}`} className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Komoditas</Label>
                         <select 
+                          id={`commodity-${index}`}
                           className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           value={item.commodity}
                           onChange={(e) => handleItemChange(index, 'commodity', e.target.value)}
@@ -156,9 +157,10 @@ const InputPage = () => {
                         </select>
                       </div>
                       <div className="md:col-span-3 space-y-2">
-                        <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Jumlah</Label>
+                        <Label htmlFor={`quantity-${index}`} className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Jumlah</Label>
                         <div className="flex gap-2">
                           <Input 
+                            id={`quantity-${index}`}
                             type="number" 
                             placeholder="0" 
                             className="bg-white" 
@@ -169,8 +171,9 @@ const InputPage = () => {
                         </div>
                       </div>
                       <div className="md:col-span-2 space-y-2">
-                        <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Satuan</Label>
+                        <Label htmlFor={`unit-${index}`} className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Satuan</Label>
                         <Input 
+                            id={`unit-${index}`}
                             placeholder="kg" 
                             className="bg-white" 
                             value={item.unit}
@@ -180,8 +183,9 @@ const InputPage = () => {
                           />
                       </div>
                       <div className="md:col-span-3 space-y-2">
-                        <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Total (Rp)</Label>
+                        <Label htmlFor={`price-${index}`} className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Total (Rp)</Label>
                         <Input 
+                          id={`price-${index}`}
                           type="number" 
                           placeholder="0" 
                           className="bg-white" 
@@ -202,8 +206,8 @@ const InputPage = () => {
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                 <Label className="text-base font-medium mb-2 block">Upload Foto Nota/Struk</Label>
                 <div className="flex items-center gap-4">
-                  <Input type="file" className="hidden" id="file-upload" />
-                  <Label htmlFor="file-upload" className="cursor-pointer flex items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg hover:bg-white hover:border-indigo-400 transition-all">
+                  <input type="file" className="sr-only peer" id="file-upload" />
+                  <Label htmlFor="file-upload" className="cursor-pointer flex items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-lg hover:bg-white hover:border-indigo-400 peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500 transition-all">
                     <div className="text-center">
                       <Upload className="mx-auto h-8 w-8 text-slate-400 mb-2" />
                       <span className="text-sm text-slate-500">Klik untuk upload foto struk</span>

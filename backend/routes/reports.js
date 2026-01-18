@@ -100,6 +100,7 @@ router.get('/', verifyToken, async (req, res) => {
 
         const reports = await Report.find(query)
             .populate('kitchen')
+            .select('-items') // Optimization: Exclude items array for list view
             .sort(sortOptions)
             .lean();
             
@@ -114,6 +115,19 @@ router.get('/kitchen/:kitchenId', verifyToken, async (req, res) => {
     try {
         const reports = await Report.find({ kitchen: req.params.kitchenId }).lean();
         res.status(200).json(reports);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// GET SINGLE REPORT (With Items)
+router.get('/:id', verifyToken, async (req, res) => {
+    try {
+        const report = await Report.findById(req.params.id)
+            .populate('kitchen')
+            .lean();
+        if (!report) return res.status(404).json({ message: "Report not found" });
+        res.status(200).json(report);
     } catch (err) {
         res.status(500).json(err);
     }
